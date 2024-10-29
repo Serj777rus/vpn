@@ -10,11 +10,13 @@
     "start": "nodemon server.js"
   },
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "nodemon": "^3.1.7",
     "vue": "^3.5.12"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
+    "sass-embedded": "^1.80.4",
     "vite": "^5.4.10"
   }
 }
