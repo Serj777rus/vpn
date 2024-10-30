@@ -147,6 +147,7 @@ async function generateClientIp(email) {
 }
 
 async function postClientConfig(clientName) {
+    console.log(clientName)
     const filePath = path.join('/root/clients/', `${clientName}.conf`);
     let mailOptions = {
         from: 's.gorbachev@webmarvels.ru', // От кого
