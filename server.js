@@ -6,7 +6,7 @@ const axios = require('axios');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
-const {execSync} = require('child_process')
+const {exec} = require('child_process')
 
 const PORT = 3000;
 const app = express()
@@ -90,8 +90,8 @@ const PRESHARED_KEY = '5tDDcUMdal61j7+jcCRKR/60Yry1nuU08IbWOaDdMJA='
 
 async function generateClientConfig(clientName, clientIp) {
     try {
-        const clientPrivateKey = execSync("wg genkey").toString().trim();
-        const clientPublicKey = execSync(`echo ${clientPrivateKey} | wg pubkey`).toString().trim();
+        const clientPrivateKey = exec("wg genkey").toString().trim();
+        const clientPublicKey = exec(`echo ${clientPrivateKey} | wg pubkey`).toString().trim();
         const clientConfig = `
         [interface]
 PrivateKey = ${clientPrivateKey}
@@ -125,7 +125,7 @@ AllowedIPs = 10.7.0.${ipS}/32
         fs.appendFileSync(serverconfigpath, clientConfig)
         console.log('Клиент добавлен в конфиг сервера')
         await  postClientConfig(clientName)
-        execSync("wg-quick down wg0 && wg-quick up wg0")
+        exec("sudo systemctl restart wg-quick@wg0.service")
         console.log('Сервер перезапущен')
     } catch(error) {
         console.error(error)
