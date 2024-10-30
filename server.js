@@ -3,7 +3,7 @@ const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const path = require('path');
+// const path = require('path');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const {execSync} = require('child_process')
@@ -146,7 +146,8 @@ async function generateClientIp(email) {
 }
 
 async function postClientConfig(clientName) {
-    const filePath = path.join('/root/clients/', `${clientName}.conf`);
+    // const filePath = path.join('/root/clients/', `${clientName}.conf`);
+    const filePath = '/root/clients/'
     console.log(clientName, filePath)
     let mailOptions = {
         from: 's.gorbachev@webmarvels.ru', // От кого
