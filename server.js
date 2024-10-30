@@ -113,7 +113,7 @@ async function generateClientConfig(clientName, clientIp) {
         console.error(error);
     }
 }
-async function addClinetOnServerConfig(ipS, clientName, SERVER_PUBLIC_KEY, PRESHARED_KEY) {
+async function addClinetOnServerConfig(ipS, clientName) {
     try {
         const serverconfigpath = '/etc/wireguard/wg0.conf';
         const clientConfig = `
