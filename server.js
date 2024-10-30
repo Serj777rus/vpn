@@ -93,12 +93,12 @@ async function generateClientConfig(clientName, clientIp) {
         const clientPrivateKey = exec("wg genkey").toString().trim();
         const clientPublicKey = exec(`echo ${clientPrivateKey} | wg pubkey`).toString().trim();
         const clientConfig = `
-[interface]
+[Interface]
 PrivateKey = ${clientPrivateKey}
 Address = 10.7.0.${clientIp}/24
 DNS = 8.8.8.8, 8.8.4.4
 
-[peer]
+[Peer]
 PublicKey = ${SERVER_PUBLIC_KEY}
 PresharedKey = ${PRESHARED_KEY}
 Endpoint = ${SERVER_IP}:${SERVER_PORT}
@@ -117,7 +117,7 @@ async function addClinetOnServerConfig(ipS, clientName) {
     try {
         const serverconfigpath = '/etc/wireguard/wg0.conf';
         const clientConfig = `
-[peer]
+[Peer]
 PublicKey = ${SERVER_PUBLIC_KEY}
 PresharedKey = ${PRESHARED_KEY}
 AllowedIPs = 10.7.0.${ipS}/32\n`
