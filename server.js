@@ -124,10 +124,9 @@ AllowedIPs = 10.7.0.${ipS}/32
 `.trim()
         fs.appendFileSync(serverconfigpath, clientConfig)
         console.log('Клиент добавлен в конфиг сервера')
-
+        await  postClientConfig(clientName)
         execSync("wg-quick down wg0 && wg-quick up wg0")
         console.log('Сервер перезапущен')
-        await  postClientConfig(clientName)
     } catch(error) {
         console.error(error)
     }
