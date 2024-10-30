@@ -106,7 +106,7 @@ AllowedIPs = 0.0.0.0/0 ::0
 PersistentKeepalive = 25
 `.trim()
         const filePath = `/root/clients/${clientName}.conf`
-        fs.writeFileSync(filePath, clientConfig)
+         await fs.writeFileSync(filePath, clientConfig)
         console.log('Конфигурация создана')
         await  addClinetOnServerConfig(clientIp, clientName)
     } catch(error) {
@@ -146,8 +146,8 @@ async function generateClientIp(email) {
 }
 
 async function postClientConfig(clientName) {
-    console.log(clientName)
     const filePath = path.join('/root/clients/', `${clientName}.conf`);
+    console.log(clientName, filePath)
     let mailOptions = {
         from: 's.gorbachev@webmarvels.ru', // От кого
         to: clientName,               // Кому
