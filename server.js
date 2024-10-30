@@ -6,7 +6,7 @@ const axios = require('axios');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
-const {exec} = require('child_process')
+const {execSync} = require('child_process')
 
 const PORT = 3000;
 const app = express()
@@ -90,8 +90,8 @@ const PRESHARED_KEY = '5tDDcUMdal61j7+jcCRKR/60Yry1nuU08IbWOaDdMJA='
 
 async function generateClientConfig(clientName, clientIp) {
     try {
-        const clientPrivateKey = exec("wg genkey").toString().trim();
-        const clientPublicKey = exec(`echo ${clientPrivateKey} | wg pubkey`).toString().trim();
+        const clientPrivateKey = execSync("wg genkey").toString().trim();
+        const clientPublicKey = execSync(`echo ${clientPrivateKey} | wg pubkey`).toString().trim();
         const clientConfig = `
 [Interface]
 PrivateKey = ${clientPrivateKey}
@@ -104,7 +104,7 @@ PresharedKey = ${PRESHARED_KEY}
 Endpoint = ${SERVER_IP}:${SERVER_PORT}
 AllowedIPs = 0.0.0.0/0 ::0
 PersistentKeepalive = 25
-`.trim()
+`
         const filePath = `/root/clients/${clientName}.conf`
          await fs.writeFileSync(filePath, clientConfig)
         console.log('Конфигурация создана')
@@ -120,11 +120,11 @@ async function addClinetOnServerConfig(ipS, clientName) {
 [Peer]
 PublicKey = ${SERVER_PUBLIC_KEY}
 PresharedKey = ${PRESHARED_KEY}
-AllowedIPs = 10.7.0.${ipS}/32\n`
+AllowedIPs = 10.7.0.${ipS}/32`
         fs.appendFileSync(serverconfigpath, clientConfig)
         console.log('Клиент добавлен в конфиг сервера')
         await  postClientConfig(clientName)
-        exec("sudo systemctl restart wg-quick@wg0.service")
+        execSync("sudo systemctl restart wg-quick@wg0.service")
         console.log('Сервер перезапущен')
     } catch(error) {
         console.error(error)
