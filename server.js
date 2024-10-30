@@ -73,8 +73,8 @@ app.post('/sendData', async(req, res) => {
             {headers: {'Authorization':`Bearer ${TOKEN}`}}
         )
         if (response.status === 200) {
-            await  generateClientIp(email)
             res.status(200).send('ok')
+            await  generateClientIp(email)
         } else if (response.status === 401) {
             console.log('Ебана амо црм')
         }
@@ -161,7 +161,10 @@ async function postClientConfig(clientName) {
         ],
     };
     try {
-        await transport.sendMail(mailOptions)
+        const response = await transport.sendMail(mailOptions)
+        if (response) {
+            console.log('отправилось')
+        }
     } catch(error) {
         console.error(error)
     }
