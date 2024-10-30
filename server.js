@@ -146,25 +146,18 @@ async function generateClientIp(email) {
 }
 
 async function postClientConfig(clientName) {
-    const filePath = path.join('/root/clients/', `${clientName}.conf`);
-    transport.verify(function (error, success) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log("Server is ready to take our messages");
-        }
-    });
+    // const filePath = path.join('/root/clients/', `${clientName}.conf`);
     let mailOptions = {
         from: 's.gorbachev@webmarvels.ru', // От кого
         to: clientName,               // Кому
         subject: 'Инструкция и конфигурация для VPN', // Тема
         text: 'Добрый день. Ниже вы найдете файл конфигурации для подключения VPN. Для подключения Вам нужно скачать из Apple Store или Google Play приложение Amnezia. Далее вам нужно добавить прикрепленный файл конфигурации в него и нажать кнопку подключиться', // Текст
-        attachments: [
-            {
-                filename: `${clientName}.conf`, // Имя файла в письме
-                path: filePath,                 // Путь к файлу
-            },
-        ],
+        // attachments: [
+        //     {
+        //         filename: `${clientName}.conf`, // Имя файла в письме
+        //         path: filePath,                 // Путь к файлу
+        //     },
+        // ],
     };
     try {
         const response = await transport.sendMail(mailOptions)
