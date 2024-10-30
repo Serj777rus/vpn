@@ -11,7 +11,8 @@ const {execSync} = require('child_process')
 const PORT = 3000;
 const app = express()
 const server = http.createServer(app);
-const TOKEN = process.env.AMO_TOKEN
+// const TOKEN = process.env.AMO_TOKEN
+const TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImIwNmI5ZWUxNTJlMjg0Y2Y0NzZiYzc3Nzk0Yjg3Y2ZhNzQ5ZmYwMzYxZDRjODAzNGY3NGM2OTg5ZDJjNTBhMjgzNjJjYjBjYTVhOWQ5ZGYwIn0.eyJhdWQiOiIxMDI5NzI4MS0wYzNhLTQ5ZjMtODEzNS01MjhlYmNhYTM5ZjciLCJqdGkiOiJiMDZiOWVlMTUyZTI4NGNmNDc2YmM3Nzc5NGI4N2NmYTc0OWZmMDM2MWQ0YzgwMzRmNzRjNjk4OWQyYzUwYTI4MzYyY2IwY2E1YTlkOWRmMCIsImlhdCI6MTczMDI4NjU5NiwibmJmIjoxNzMwMjg2NTk2LCJleHAiOjE4MjQ5NDA4MDAsInN1YiI6IjExNzEzNzQ2IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMyMDM4MTU4LCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJjcm0iLCJmaWxlcyIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiLCJwdXNoX25vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiZTFkMDViYjktMjQzNC00OWJiLTg1ZmMtZmVmMmFlYmQ2OWE2IiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.RLOG0NL8DNs4FKx9pcElQ2BGF_SBieE6YWuP46WNkvbTjZSGbBiniCW8Rxu0W846tviDEeIxpXVNC0Se2Q9sfsZ-GStJ72ej774lizlGghsbDLmTAWJbvqKy0eWc9HI9K7snV1_YXR5Eyxdg1b3YLQ29eeC_Ts4UWq7478cEpEqj_BR0UOxRNPjqWjMbcl7HLWO8KhH3MAo_WGyILT3GM0pVcbOlf8c-1dYFzYZJN37c0U2G4QWWWVxJX6PGBcuINZ9Q68AGzF2Q7ZHs0RuomQbxQNRhwykLECAqWuI7fEht5G4OcojUqPahsU3dmXIS_JXE2jRzil025_imMoFJ3A'
 
 const transport = nodemailer.createTransport({
     host: 'smtp.mail.ru',
@@ -31,12 +32,13 @@ app.use(cors({
 }))
 
 app.post('/sendData', async(req, res) => {
-    const { name, email, site } = req.body
+    let { name, email, site } = req.body
+    console.log(name, email, site);
     if (!site) {
         site = 'Сайта нет'
     }
     try {
-        const response = await axios.post('https://amocrm.ru/api/v4/leads/complex', 
+        const response = await axios.post('https://webmarvels.amocrm.ru/api/v4/leads/complex',
             [
                 {
                     "name": "Новая сделка с Instagram",
@@ -71,7 +73,8 @@ app.post('/sendData', async(req, res) => {
             {headers: {'Authorization':`Bearer ${TOKEN}`}}
         )
         if (response.status === 200) {
-            generateClientIp(email)
+            await  generateClientIp(email)
+            res.status(200).send('ok')
         } else if (response.status === 401) {
             console.log('Ебана амо црм')
         }
@@ -85,7 +88,7 @@ const SERVER_IP = '103.137.251.50'
 const SERVER_PORT = 51820
 const PRESHARED_KEY = '5tDDcUMdal61j7+jcCRKR/60Yry1nuU08IbWOaDdMJA='
 
-function generateClientConfig(clientName, clientIp) {
+async function generateClientConfig(clientName, clientIp) {
     try {
         const clientPrivateKey = execSync("wg genkey").toString().trim();
         const clientPublicKey = execSync(`echo ${clientPrivateKey} | wg pubkey`).toString().trim();
@@ -105,12 +108,12 @@ function generateClientConfig(clientName, clientIp) {
         const filePath = `/root/clients/${clientName}.conf`
         fs.writeFileSync(filePath, clientConfig)
         console.log('Конфигурация создана')
-        addClinetOnServerConfig(clientIp, clientName)
+        await  addClinetOnServerConfig(clientIp, clientName)
     } catch(error) {
         console.error(error);
     }
 }
-function addClinetOnServerConfig(ipS, clientName, SERVER_PUBLIC_KEY, PRESHARED_KEY) {
+async function addClinetOnServerConfig(ipS, clientName, SERVER_PUBLIC_KEY, PRESHARED_KEY) {
     try {
         const serverconfigpath = '/etc/wireguard/wg0.conf';
         const clientConfig = `
@@ -124,23 +127,23 @@ function addClinetOnServerConfig(ipS, clientName, SERVER_PUBLIC_KEY, PRESHARED_K
 
         execSync("wg-quick down wg0 && wg-quick up wg0")
         console.log('Сервер перезапущен')
-        postClientConfig(clientName)
+        await  postClientConfig(clientName)
     } catch(error) {
         console.error(error)
     }
 }
-function generateClientIp(email) {
+async function generateClientIp(email) {
     const input = JSON.parse(fs.readFileSync('clients.json', 'utf8'))
     let newIp = 0;
     for (let i = 0; i <= input.length; i++) {
-        if (i == input.length) {
+        if (i === input.length - 1) {
             newIp = input[i].ip + 1
         }
     }
     const newClient = { name: email, ip: newIp }
     input.push(newClient);
     fs.writeFileSync('clients.json', JSON.stringify(input, null, 2))
-    generateClientConfig(email, newIp)
+    await  generateClientConfig(email, newIp)
 }
 
 async function postClientConfig(clientName) {

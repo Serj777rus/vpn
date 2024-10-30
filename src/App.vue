@@ -65,7 +65,12 @@ export default {
       try {
         const response = await axios.post('api/sendData', this.form)
         if (response.status === 200) {
-          this.message = 'Данные отправлены. Инструкция по подклчению придет на указанную почту'
+          this.message = 'Данные отправлены. Инструкция по подключению придет на указанную почту'
+          this.form = {
+            name: '',
+            email: '',
+            site: ''
+          }
           setTimeout(() => {
             this.message = ''
           }, 2000)

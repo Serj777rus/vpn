@@ -1,6 +1,10 @@
 [
-    {
-        "client": "client",
-        "ip": 2
-    }
+  {
+    "client": "client",
+    "ip": 2
+  },
+  {
+    "name": "gvsergey89@gmail.co",
+    "ip": 3
+  }
 ]
