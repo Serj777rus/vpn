@@ -147,7 +147,7 @@ async function generateClientIp(email) {
 async function postClientConfig(clientName) {
     const filePath = path.join('/root/clients/', `${clientName}.conf`);
     let mailOptions = {
-        from: '"Maddison Foo Koch 👻" <s.gorbachev@webmarvels.ru>', // От кого
+        from: '"VPN" <s.gorbachev@webmarvels.ru>', // От кого
         to: clientName,               // Кому
         subject: 'Инструкция и конфигурация для VPN', // Тема
         text: 'Добрый день. Ниже вы найдете файл конфигурации для подключения VPN. Для подключения Вам нужно скачать из Apple Store или Google Play приложение Amnezia. Далее вам нужно добавить прикрепленный файл конфигурации в него и нажать кнопку подключиться', // Текст
