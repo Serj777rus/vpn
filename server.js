@@ -20,7 +20,7 @@ const transport = nodemailer.createTransport({
     secure: true,
     auth: {
         user: 's.gorbachev@webmarvels.ru',
-        pass: 'Ft6VwK1jNBbPC63sbxzC'
+        pass: 'SseLPXg2QGteip0AAaLN'
     }
 })
 
