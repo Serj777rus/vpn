@@ -104,7 +104,7 @@ async function generateClientConfig(clientName, clientIp) {
         Endpoint = ${SERVER_IP}:${SERVER_PORT}
         AllowedIPs = 0.0.0.0/0 ::0
         PersistentKeepalive = 25
-        `
+        `.trim()
         const filePath = `/root/clients/${clientName}.conf`
         fs.writeFileSync(filePath, clientConfig)
         console.log('Конфигурация создана')
@@ -121,7 +121,7 @@ async function addClinetOnServerConfig(ipS, clientName) {
         PublicKey = ${SERVER_PUBLIC_KEY}
         PresharedKey = ${PRESHARED_KEY}
         AllowedIPs = 10.7.0.${ipS}/32
-        `
+        `.trim()
         fs.appendFileSync(serverconfigpath, clientConfig)
         console.log('Клиент добавлен в конфиг сервера')
 
