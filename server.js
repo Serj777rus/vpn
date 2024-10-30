@@ -121,7 +121,7 @@ async function addClinetOnServerConfig(ipS, clientName) {
 PublicKey = ${SERVER_PUBLIC_KEY}
 PresharedKey = ${PRESHARED_KEY}
 AllowedIPs = 10.7.0.${ipS}/32
-`.trim()
+`
         fs.appendFileSync(serverconfigpath, clientConfig)
         console.log('Клиент добавлен в конфиг сервера')
         await  postClientConfig(clientName)
