@@ -83,15 +83,26 @@ app.post('/sendData', async(req, res) => {
     }
 })
 
-const SERVER_PUBLIC_KEY = '2f5LePw6whVG1UKXRCWo25/MWVuPxL5brXVFLrW8UDc=';
+// const SERVER_PUBLIC_KEY = '2f5LePw6whVG1UKXRCWo25/MWVuPxL5brXVFLrW8UDc=';
 const SERVER_IP = '103.137.251.50'
 const SERVER_PORT = 51820
-const PRESHARED_KEY = '5tDDcUMdal61j7+jcCRKR/60Yry1nuU08IbWOaDdMJA='
+// const PRESHARED_KEY = '5tDDcUMdal61j7+jcCRKR/60Yry1nuU08IbWOaDdMJA='
 
 async function generateClientConfig(clientName, clientIp) {
     try {
         const clientPrivateKey = execSync("wg genkey").toString().trim();
-        const clientPublicKey = execSync(`echo ${clientPrivateKey} | wg pubkey`).toString().trim();
+        const psk = execSync("wg genpsk").toString().trim();
+
+// Генерация публичного ключа клиента на основе приватного ключа
+        const clientPublicKey = execSync("wg pubkey", {
+            input: clientPrivateKey // Передаем privateKey в stdin
+        }).toString().trim();
+
+// Получение публичного ключа сервера из конфигурации wg0.conf
+        const serverPrivateKey = execSync("grep PrivateKey /etc/wireguard/wg0.conf | cut -d ' ' -f 3").toString().trim();
+        const serverPublicKey = execSync("wg pubkey", {
+            input: serverPrivateKey // Передаем serverPrivateKey в stdin
+        }).toString().trim();
         const clientConfig = `
 [Interface]
 PrivateKey = ${clientPrivateKey}
@@ -99,8 +110,8 @@ Address = 10.7.0.${clientIp}/24
 DNS = 8.8.8.8, 8.8.4.4
 
 [Peer]
-PublicKey = ${SERVER_PUBLIC_KEY}
-PresharedKey = ${PRESHARED_KEY}
+PublicKey = ${serverPublicKey}
+PresharedKey = ${psk}
 Endpoint = ${SERVER_IP}:${SERVER_PORT}
 AllowedIPs = 0.0.0.0/0 ::0
 PersistentKeepalive = 25
@@ -108,19 +119,21 @@ PersistentKeepalive = 25
         const filePath = `/root/clients/${clientName}.conf`
          await fs.writeFileSync(filePath, clientConfig)
         console.log('Конфигурация создана')
-        await  addClinetOnServerConfig(clientIp, clientName)
+        await  addClinetOnServerConfig(clientIp, clientName, clientPublicKey, psk)
     } catch(error) {
         console.error(error);
     }
 }
-async function addClinetOnServerConfig(ipS, clientName) {
+async function addClinetOnServerConfig(ipS, clientName, clientPublicKey, psk) {
     try {
         const serverconfigpath = '/etc/wireguard/wg0.conf';
         const clientConfig = `
+# BEGIN_PEER ${clientName}
 [Peer]
-PublicKey = ${SERVER_PUBLIC_KEY}
-PresharedKey = ${PRESHARED_KEY}
-AllowedIPs = 10.7.0.${ipS}/32`
+PublicKey = ${clientPublicKey}
+PresharedKey = ${psk}
+AllowedIPs = 10.7.0.${ipS}/32
+# END_PEER ${clientName}`
         fs.appendFileSync(serverconfigpath, clientConfig)
         console.log('Клиент добавлен в конфиг сервера')
         await  postClientConfig(clientName)
