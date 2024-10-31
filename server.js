@@ -113,7 +113,7 @@ DNS = 8.8.8.8, 8.8.4.4
 PublicKey = ${serverPublicKey}
 PresharedKey = ${psk}
 Endpoint = ${SERVER_IP}:${SERVER_PORT}
-AllowedIPs = 0.0.0.0/0 ::0
+AllowedIPs = 0.0.0.0/0, ::/0
 PersistentKeepalive = 25
 `
         const filePath = `/root/clients/${clientName}.conf`
