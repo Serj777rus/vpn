@@ -11,8 +11,8 @@ const {execSync} = require('child_process')
 const PORT = 3000;
 const app = express()
 const server = http.createServer(app);
-// const TOKEN = process.env.AMO_TOKEN
-const TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImIwNmI5ZWUxNTJlMjg0Y2Y0NzZiYzc3Nzk0Yjg3Y2ZhNzQ5ZmYwMzYxZDRjODAzNGY3NGM2OTg5ZDJjNTBhMjgzNjJjYjBjYTVhOWQ5ZGYwIn0.eyJhdWQiOiIxMDI5NzI4MS0wYzNhLTQ5ZjMtODEzNS01MjhlYmNhYTM5ZjciLCJqdGkiOiJiMDZiOWVlMTUyZTI4NGNmNDc2YmM3Nzc5NGI4N2NmYTc0OWZmMDM2MWQ0YzgwMzRmNzRjNjk4OWQyYzUwYTI4MzYyY2IwY2E1YTlkOWRmMCIsImlhdCI6MTczMDI4NjU5NiwibmJmIjoxNzMwMjg2NTk2LCJleHAiOjE4MjQ5NDA4MDAsInN1YiI6IjExNzEzNzQ2IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMyMDM4MTU4LCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJjcm0iLCJmaWxlcyIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiLCJwdXNoX25vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiZTFkMDViYjktMjQzNC00OWJiLTg1ZmMtZmVmMmFlYmQ2OWE2IiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.RLOG0NL8DNs4FKx9pcElQ2BGF_SBieE6YWuP46WNkvbTjZSGbBiniCW8Rxu0W846tviDEeIxpXVNC0Se2Q9sfsZ-GStJ72ej774lizlGghsbDLmTAWJbvqKy0eWc9HI9K7snV1_YXR5Eyxdg1b3YLQ29eeC_Ts4UWq7478cEpEqj_BR0UOxRNPjqWjMbcl7HLWO8KhH3MAo_WGyILT3GM0pVcbOlf8c-1dYFzYZJN37c0U2G4QWWWVxJX6PGBcuINZ9Q68AGzF2Q7ZHs0RuomQbxQNRhwykLECAqWuI7fEht5G4OcojUqPahsU3dmXIS_JXE2jRzil025_imMoFJ3A'
+const TOKEN = process.env.AMO_TOKEN
+const MAIL_PASS = process.env.MAIL_PASS
 
 const transport = nodemailer.createTransport({
     host: 'smtp.mail.ru',
@@ -20,7 +20,8 @@ const transport = nodemailer.createTransport({
     secure: true,
     auth: {
         user: 's.gorbachev@webmarvels.ru',
-        pass: 'SseLPXg2QGteip0AAaLN'
+        pass: MAIL_PASS
+
     }
 })
 
@@ -83,10 +84,8 @@ app.post('/sendData', async(req, res) => {
     }
 })
 
-// const SERVER_PUBLIC_KEY = '2f5LePw6whVG1UKXRCWo25/MWVuPxL5brXVFLrW8UDc=';
 const SERVER_IP = '103.137.251.50'
 const SERVER_PORT = 51820
-// const PRESHARED_KEY = '5tDDcUMdal61j7+jcCRKR/60Yry1nuU08IbWOaDdMJA='
 
 async function generateClientConfig(clientName, clientIp) {
     try {
